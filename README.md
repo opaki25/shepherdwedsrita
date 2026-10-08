@@ -1,8 +1,8 @@
-# Rita & Shepherd wedding website
+# Shepherd & Rita wedding website
 
 Static website in `dist/`, deployed on Vercel. Local preview: `node preview.cjs`.
 
-Wedding: Awekonimungu Rita and Mukundane Shepherd, 12 December 2026 at 1:00 PM EAT. Venue: Flamingo Hall, Freedom City, Namasuba, Kampala. Chairman Aggrey: +256701539163.
+Wedding: Mukundane Shepherd and Awekonimungu Rita, 12 December 2026 at 1:00 PM EAT. Venue: Flamingo Hall, Freedom City, Namasuba, Kampala. Chairman Aggrey: +256701539163.
 
 The top RSVP link opens the invitation-card checker. Guests do not register. See `database/README.md` for issuing unique card codes, revoking cards and privacy notes. The site verifies codes via the `verify-wedding-card` Supabase Edge Function; its source is in `database/verify-wedding-card.ts`.
 

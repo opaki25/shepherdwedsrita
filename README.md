@@ -11,7 +11,8 @@ The detailed ceremony programme awaits confirmation; the earlier reference invit
 - Add the WhatsApp group URL to `dist/config.js`.
 - Add the YouTube broadcast's 11-character video ID to `youtubeVideoId` in that file. The broadcast must allow embedding. A camera/operator and actual broadcast are still needed on the day. The site does not originate a livestream.
 - Add post-wedding images under `dist/assets/wedding/` and list each `src` and `caption` in `photos` in `dist/config.js`. Republish to make them available. Same-origin downloads are supported. There is no public upload or admin system in this preview.
-- RSVP opens a prepared WhatsApp message to Aggrey. A guest must send it in WhatsApp; no response is stored by the website.
+- RSVP saves replies in the `wedding_rsvps` table in the `shepherdwedsrita` Supabase project. Public visitors can insert valid replies but cannot read, update or delete replies. Authenticated Data API reads are restricted to `opakijonathan30@gmail.com` through row-level security. Project administrators retain their normal dashboard access.
+- View the private guest list at https://supabase.com/dashboard/project/kmmbavbmwpzfkdiwqqzm/editor and select `wedding_rsvps`. Use the table export action to download CSV. Dashboard access uses your Supabase account; this website does not create a separate organiser login.
 - Music starts from the invitation's open gesture and can be paused at any time.
 
 ## Preview

@@ -38,6 +38,19 @@ body{--music-pulse:0}
 @keyframes words-arrival{from{opacity:0;translate:0 18px}to{opacity:1;translate:0 0}}
 @media(max-height:600px){.invitation{justify-content:center;padding:0;overflow:hidden}}
 @media(prefers-reduced-motion:reduce){.invitation.opening{opacity:0}.seal-prompt .seal{animation:none}.revealing .hero-photo,.revealing .hero-copy{animation:none}}
+.rsvp{grid-template-columns:.8fr 1.2fr;gap:7%;align-items:start}
+.rsvp-event{margin-top:35px;border-top:1px solid #c9d3bf;padding-top:24px;display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted)}
+.rsvp-event span:first-child{font-size:9px;letter-spacing:1.5px}.rsvp-event strong{font:28px var(--serif);color:var(--ink)}
+#rsvpForm{background:#fafbf6;border:1px solid #d5deca;padding:36px;box-shadow:0 14px 50px #34453508}
+.rsvp-form-heading{margin-bottom:28px}.rsvp-form-heading h3{font-size:32px;margin:10px 0}.rsvp-form-heading>p:last-child{font-size:10px;color:var(--muted)}
+#rsvpForm input:not([type=radio]),#rsvpForm select,#rsvpForm textarea{border:1px solid #ccd5c1;background:white;border-radius:5px;padding:12px;width:100%;margin-bottom:22px;min-height:46px}
+#rsvpForm textarea{margin-bottom:20px}#rsvpForm label{font-size:11px}#rsvpForm input:focus,#rsvpForm select:focus,#rsvpForm textarea:focus{outline:2px solid #8b9b7d;outline-offset:2px}
+.attendance-options{border:0;padding:0;margin:0 0 28px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.attendance-options legend{font-size:11px;margin-bottom:12px}
+#rsvpForm .attendance-card{position:relative;display:flex;align-items:center;gap:10px;border:1px solid #ccd5c1;border-radius:5px;padding:15px 12px;margin:0;cursor:pointer;background:white}
+.attendance-card input{position:absolute;opacity:0;width:1px;height:1px}.attendance-card strong{display:block;font-size:12px;font-weight:500}.attendance-card small{display:block;font-size:10px;color:var(--muted);margin-top:4px}.choice-mark{margin-left:auto;border:1px solid #bcc8ae;border-radius:50%;min-width:18px;height:18px;text-align:center;line-height:16px;color:transparent}
+#rsvpForm .attendance-card:has(input:checked){background:#edf2e7;border-color:#71865d}.attendance-card:has(input:checked) .choice-mark{background:#526848;color:white;border-color:#526848}.attendance-card:has(input:focus-visible){outline:2px solid #71865d;outline-offset:3px}
+#rsvpForm .form-pair{grid-template-columns:1fr 1fr;gap:16px}.field-hint{font-size:10px;color:var(--muted);margin:-12px 0 20px}#rsvpForm .button{margin-top:0;min-height:50px}.button:disabled{opacity:.6;cursor:wait}#rsvpStatus{padding:12px 0}#rsvpStatus:empty{display:none}.rsvp-success{padding:32px 5px;text-align:center}.rsvp-success h3{margin:14px 0}.rsvp-success p{color:var(--muted)}.rsvp-success .success-check{display:inline-grid;place-items:center;background:#e4ecd9;border-radius:50%;width:56px;height:56px;font-size:26px}
+@media(max-width:760px){.rsvp{grid-template-columns:1fr;gap:30px}#rsvpForm{padding:24px 18px}.rsvp-form-heading h3{font-size:29px}#rsvpForm .form-pair{grid-template-columns:1fr;gap:0}.attendance-options{gap:8px}#rsvpForm .attendance-card{padding:12px 9px}.attendance-card strong{font-size:11px}.attendance-card small{font-size:9px}}
 
 /* Rebalance sections after removing extra captions. */
 .moments .section-heading h2,.location .section-heading h2{margin-top:0}.watch h2{margin-top:0}.album h2{margin-top:0}.footer-bottom{justify-content:center}.footer-links{margin-top:24px;margin-bottom:32px}.album{padding-top:85px;padding-bottom:85px}@media(max-width:760px){.album{padding-top:60px;padding-bottom:60px}.section-heading{margin-bottom:28px}footer{padding-top:48px}}

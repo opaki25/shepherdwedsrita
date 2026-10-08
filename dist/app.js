@@ -82,11 +82,19 @@ music.addEventListener('ended',stopRhythm);
 music.addEventListener('waiting',stopRhythm);
 music.addEventListener('error',stopRhythm);
 // Never keep the soundtrack playing in a hidden tab or background window.
-// Returning leaves playback paused until the guest chooses Music on.
-function pauseBackgroundMusic(){music.pause();stopRhythm()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseBackgroundMusic()});
+// Remember automatic pauses without overriding a guest's choice to turn music off.
+let resumeMusicOnReturn=false;
+function pauseBackgroundMusic(){resumeMusicOnReturn=resumeMusicOnReturn||!music.paused;music.pause();stopRhythm()}
+function resumeBackgroundMusic(){
+  if(document.hidden||!document.hasFocus()||!resumeMusicOnReturn)return;
+  resumeMusicOnReturn=false;
+  playMusic();
+}
+document.addEventListener('visibilitychange',()=>document.hidden?pauseBackgroundMusic():resumeBackgroundMusic());
 window.addEventListener('pagehide',pauseBackgroundMusic);
 window.addEventListener('blur',pauseBackgroundMusic);
+window.addEventListener('focus',resumeBackgroundMusic);
+window.addEventListener('pageshow',resumeBackgroundMusic);
 reducedMotion.addEventListener('change',()=>{stopRhythm();startRhythm()});
 const lightbox=document.querySelector('#lightbox');let previousFocus;
 document.querySelectorAll('[data-photo]').forEach(button=>button.addEventListener('click',()=>{previousFocus=button;const src='assets/'+button.dataset.photo;document.querySelector('#lightboxImage').src=src;document.querySelector('#lightboxImage').alt=button.querySelector('img').alt;const download=document.querySelector('#downloadPhoto');download.href=src;download.download='Rita-and-Shepherd-'+button.dataset.photo;lightbox.showModal()}));

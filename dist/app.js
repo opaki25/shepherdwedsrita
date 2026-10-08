@@ -16,6 +16,7 @@ rhythm.className='rhythm-line';rhythm.setAttribute('aria-hidden','true');
 const rhythmBars=Array.from({length:40},()=>{const bar=document.createElement('i');rhythm.append(bar);return bar});
 document.body.append(rhythm);
 const miniBars=[...document.querySelectorAll('.music-bars i')];
+const movingRings=[...document.querySelectorAll('.heading-rings,.monogram-rings')];
 let audioContext,analyser,spectrum,frameId=0,lastFrame=0,averageBass=0,pulse=0,lastBeat=0;
 async function prepareRhythm(){
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
@@ -38,6 +39,7 @@ function stopRhythm(){
   document.body.style.setProperty('--music-pulse','0');
   rhythmBars.forEach(bar=>bar.style.transform='scaleY(.08)');
   miniBars.forEach(bar=>bar.style.removeProperty('height'));
+  movingRings.forEach(ring=>ring.style.removeProperty('transform'));
 }
 function animateRhythm(now){
   if(music.paused||music.ended||document.hidden||reducedMotion.matches||!analyser){stopRhythm();return}
@@ -48,11 +50,22 @@ function animateRhythm(now){
   const low=Math.max(1,Math.floor(55/binHz)),high=Math.max(low+1,Math.ceil(220/binHz));
   let bass=0;for(let i=low;i<=high;i++)bass+=spectrum[i]/255;
   bass/=high-low+1;
-  averageBass=averageBass*.94+bass*.06;
-  if(bass>.13&&bass>averageBass*1.16&&now-lastBeat>280){pulse=Math.min(1,bass*1.45);lastBeat=now}
-  pulse*=.87;
-  const strength=Math.min(1,pulse+bass*.2);
+  const previousAverage=averageBass;
+  averageBass=averageBass*.97+bass*.03;
+  if(bass>.06&&bass>previousAverage*1.045&&now-lastBeat>260){pulse=Math.min(1,.45+bass);lastBeat=now}
+  pulse*=.91;
+  const strength=Math.min(1,pulse+bass*.45);
   document.body.style.setProperty('--music-pulse',strength.toFixed(3));
+  // A continuous musical sway keeps softer passages alive; real bass accents
+  // add a stronger lift. Use the playback clock so the movement follows pause/seek.
+  const phase=music.currentTime*Math.PI;
+  const sway=Math.sin(phase);
+  const breath=(1-Math.cos(phase*2))*.5;
+  const audible=Math.min(1,bass*9);
+  const scale=1+audible*(.045+breath*.085)+pulse*.12;
+  const angle=sway*(4+audible*3);
+  const lift=-(breath*4*audible+pulse*5);
+  movingRings.forEach(ring=>ring.style.transform=`translateY(${lift.toFixed(2)}px) rotate(${(angle*audible).toFixed(2)}deg) scale(${scale.toFixed(3)})`);
   rhythmBars.forEach((bar,index)=>{
     const bin=Math.min(spectrum.length-1,Math.round(2*Math.pow(100,index/(rhythmBars.length-1))));
     const level=spectrum[bin]/255;

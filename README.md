@@ -2,9 +2,9 @@
 
 Static website in `dist/`. Serve that directory with any static host.
 
-Confirmed names: Awekonimungu Rita and Mukundane Shepherd. Chairman: Aggrey, +256701539163. Wedding date: 12 December 2026. Venue: Flamingo Hall at Freedom City. Address: Namasuba, Kampala–Entebbe Road.
+Confirmed names: Awekonimungu Rita and Mukundane Shepherd. Chairman: Aggrey, +256701539163. Wedding date: 12 December 2026 at 10:00 AM EAT. Venue: Flamingo Hall at Freedom City. Address: Namasuba, Kampala–Entebbe Road.
 
-The ceremony programme and times await confirmation; the earlier reference invitation has a different date and venue, so its programme has not been reused.
+The detailed ceremony programme awaits confirmation; the earlier reference invitation has a different date and venue, so its programme has not been reused.
 
 ## Updating the celebration
 

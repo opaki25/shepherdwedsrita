@@ -3,3 +3,13 @@
 [hidden]{display:none!important}.seal{flex-shrink:0}@media(max-height:600px){.invitation{justify-content:flex-start;overflow-y:auto;padding-top:35px;padding-bottom:35px}.invitation>h1{margin:15px 0}.seal{margin:20px 0}.invitation:before{position:fixed}}
 
 .monogram{display:inline-flex;align-items:center;gap:5px}.monogram img.monogram-rings{width:29px;height:24px;object-fit:contain}.hero-copy h1 img.heading-rings{display:inline-block;width:.85em;height:.72em;object-fit:contain;vertical-align:baseline;margin:0 .06em;filter:drop-shadow(0 2px 3px #0003)}@media(max-width:760px){.monogram img.monogram-rings{width:24px;height:21px}.hero-copy h1 img.heading-rings{width:.73em;height:.61em}}
+/* A quiet, real-time response to the song, without moving the page or its text. */
+body{--music-pulse:0}
+.rhythm-line{position:fixed;z-index:7;bottom:0;left:50%;transform:translateX(-50%);width:min(390px,40vw);height:22px;display:flex;align-items:flex-end;justify-content:center;gap:4px;pointer-events:none;opacity:0;transition:opacity .6s}
+.rhythm-line i{height:100%;flex:1;max-width:5px;border-radius:4px 4px 0 0;transform-origin:bottom;transform:scaleY(.08);background:linear-gradient(to top,#81936f99,#d6be7dbb);transition:transform 90ms linear}
+.rhythm-active .rhythm-line{opacity:.65}
+.rhythm-active .heading-rings,.rhythm-active .monogram-rings{transform:scale(calc(1 + var(--music-pulse)*.055)) rotate(calc(var(--music-pulse)*2deg));transition:transform 90ms ease-out}
+.rhythm-active .music-control{box-shadow:0 3px 22px #0002,0 0 0 calc(2px + var(--music-pulse)*10px) #a8b99235;transition:box-shadow 90ms ease-out}
+.rhythm-active .music-bars i{animation:none!important;transition:height 90ms linear}
+@media(max-width:760px){.rhythm-line{width:34vw;height:14px;gap:2px}}
+@media(prefers-reduced-motion:reduce){.rhythm-line{display:none}.rhythm-active .heading-rings,.rhythm-active .monogram-rings{transform:none}}

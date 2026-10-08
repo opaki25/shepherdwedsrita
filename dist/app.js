@@ -3,12 +3,74 @@ const toggle=document.querySelector('#musicToggle');
 const label=document.querySelector('#musicLabel');
 music.volume=.45;
 function syncMusic(){const playing=!music.paused;toggle.classList.toggle('playing',playing);toggle.setAttribute('aria-pressed',String(playing));toggle.setAttribute('aria-label',playing?'Pause background music':'Play background music');label.textContent=playing?'Music on':'Music off';}
-async function playMusic(){try{await music.play()}catch{label.textContent='Tap to play'}syncMusic()}
+async function playMusic(){try{await prepareRhythm();await music.play()}catch{label.textContent='Tap to play'}syncMusic()}
 function openInvitation(sound){document.querySelector('#main').inert=false;document.body.classList.remove('sealed');const invitation=document.querySelector('#invitation');invitation.classList.add('opening');if(sound)playMusic();setTimeout(()=>{invitation.hidden=true;document.querySelector('.monogram').focus({preventScroll:true})},1100)}
 document.querySelector('#openInvitation').addEventListener('click',()=>openInvitation(true));
 document.querySelector('#openQuiet').addEventListener('click',()=>openInvitation(false));
 toggle.addEventListener('click',()=>music.paused?playMusic():music.pause());
 music.addEventListener('play',syncMusic);music.addEventListener('pause',syncMusic);
+// Read the song locally: no microphone, recording, or external audio service.
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const rhythm=document.createElement('div');
+rhythm.className='rhythm-line';rhythm.setAttribute('aria-hidden','true');
+const rhythmBars=Array.from({length:40},()=>{const bar=document.createElement('i');rhythm.append(bar);return bar});
+document.body.append(rhythm);
+const miniBars=[...document.querySelectorAll('.music-bars i')];
+let audioContext,analyser,spectrum,frameId=0,lastFrame=0,averageBass=0,pulse=0,lastBeat=0;
+async function prepareRhythm(){
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)return;
+  try{
+    if(!audioContext){
+      audioContext=new AudioContextClass();
+      const source=audioContext.createMediaElementSource(music);
+      // Keep a direct audible path even if visual analysis cannot initialize.
+      source.connect(audioContext.destination);
+      analyser=audioContext.createAnalyser();analyser.fftSize=1024;analyser.smoothingTimeConstant=.72;
+      source.connect(analyser);spectrum=new Uint8Array(analyser.frequencyBinCount);
+    }
+    if(audioContext.state==='suspended')await audioContext.resume();
+  }catch{ /* Ordinary audio playback remains the fallback. */ }
+}
+function stopRhythm(){
+  cancelAnimationFrame(frameId);frameId=0;lastFrame=0;averageBass=0;pulse=0;
+  document.body.classList.remove('rhythm-active');
+  document.body.style.setProperty('--music-pulse','0');
+  rhythmBars.forEach(bar=>bar.style.transform='scaleY(.08)');
+  miniBars.forEach(bar=>bar.style.removeProperty('height'));
+}
+function animateRhythm(now){
+  if(music.paused||music.ended||document.hidden||reducedMotion.matches||!analyser){stopRhythm();return}
+  frameId=requestAnimationFrame(animateRhythm);
+  if(now-lastFrame<32)return;
+  lastFrame=now;analyser.getByteFrequencyData(spectrum);
+  const binHz=audioContext.sampleRate/analyser.fftSize;
+  const low=Math.max(1,Math.floor(55/binHz)),high=Math.max(low+1,Math.ceil(220/binHz));
+  let bass=0;for(let i=low;i<=high;i++)bass+=spectrum[i]/255;
+  bass/=high-low+1;
+  averageBass=averageBass*.94+bass*.06;
+  if(bass>.13&&bass>averageBass*1.16&&now-lastBeat>280){pulse=Math.min(1,bass*1.45);lastBeat=now}
+  pulse*=.87;
+  const strength=Math.min(1,pulse+bass*.2);
+  document.body.style.setProperty('--music-pulse',strength.toFixed(3));
+  rhythmBars.forEach((bar,index)=>{
+    const bin=Math.min(spectrum.length-1,Math.round(2*Math.pow(100,index/(rhythmBars.length-1))));
+    const level=spectrum[bin]/255;
+    bar.style.transform=`scaleY(${Math.max(.08,level*level).toFixed(3)})`;
+  });
+  miniBars.forEach((bar,index)=>bar.style.height=`${3+15*spectrum[3+index*9]/255}px`);
+}
+function startRhythm(){
+  if(frameId||!analyser||music.paused||document.hidden||reducedMotion.matches)return;
+  document.body.classList.add('rhythm-active');frameId=requestAnimationFrame(animateRhythm);
+}
+music.addEventListener('playing',startRhythm);
+music.addEventListener('pause',stopRhythm);
+music.addEventListener('ended',stopRhythm);
+music.addEventListener('waiting',stopRhythm);
+music.addEventListener('error',stopRhythm);
+document.addEventListener('visibilitychange',()=>document.hidden?stopRhythm():startRhythm());
+reducedMotion.addEventListener('change',()=>{stopRhythm();startRhythm()});
 document.querySelector('#rsvpForm').addEventListener('submit',event=>{event.preventDefault();const name=document.querySelector('#guestName').value.trim();if(!name){document.querySelector('#guestName').setCustomValidity('Please enter your name.');document.querySelector('#guestName').reportValidity();return}const attendance=document.querySelector('#attendance').value;const guests=document.querySelector('#guests').value;const note=document.querySelector('#message').value.trim();const text=`Hello Chairman Aggrey, this is my RSVP for Rita & Shepherd’s wedding.\n\nName: ${name}\nResponse: ${attendance}${attendance==='Joyfully attending'?`\nGuests (including me): ${guests}`:''}${note?`\nNote: ${note}`:''}`;window.open('https://wa.me/256701539163?text='+encodeURIComponent(text),'_blank','noopener');document.querySelector('#rsvpStatus').textContent='Your message is ready. Send it in WhatsApp to complete your RSVP.'});
 document.querySelector('#guestName').addEventListener('input',event=>event.target.setCustomValidity(''));
 document.querySelector('#attendance').addEventListener('change',event=>{document.querySelector('#guests').disabled=event.target.value!=='Joyfully attending'});

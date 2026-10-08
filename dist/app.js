@@ -4,9 +4,8 @@ const label=document.querySelector('#musicLabel');
 music.volume=.45;
 function syncMusic(){const playing=!music.paused;toggle.classList.toggle('playing',playing);toggle.setAttribute('aria-pressed',String(playing));toggle.setAttribute('aria-label',playing?'Pause background music':'Play background music');label.textContent=playing?'Music on':'Music off';}
 async function playMusic(){try{await prepareRhythm();await music.play()}catch{label.textContent='Tap to play'}syncMusic()}
-function openInvitation(sound){document.querySelector('#main').inert=false;document.body.classList.remove('sealed');const invitation=document.querySelector('#invitation');invitation.classList.add('opening');if(sound)playMusic();setTimeout(()=>{invitation.hidden=true;document.querySelector('.monogram').focus({preventScroll:true})},1100)}
+function openInvitation(sound){const invitation=document.querySelector('#invitation');if(invitation.classList.contains('opening'))return;invitation.classList.add('opening');document.body.classList.add('revealing');if(sound)playMusic();setTimeout(()=>{invitation.hidden=true;document.querySelector('#main').inert=false;document.body.classList.remove('sealed','revealing');document.querySelector('.monogram').focus({preventScroll:true})},matchMedia('(prefers-reduced-motion: reduce)').matches?80:2600)}
 document.querySelector('#openInvitation').addEventListener('click',()=>openInvitation(true));
-document.querySelector('#openQuiet').addEventListener('click',()=>openInvitation(false));
 toggle.addEventListener('click',()=>music.paused?playMusic():music.pause());
 music.addEventListener('play',syncMusic);music.addEventListener('pause',syncMusic);
 // Read the song locally: no microphone, recording, or external audio service.
